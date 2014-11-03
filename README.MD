@@ -1,5 +1,6 @@
 # RAILS GUIDE
 
+highlighted with http://tinker.kotaweaver.com/blog/?p=152
 
 ## 1. Введение
 
@@ -1684,13 +1685,13 @@ config.assets.js_compressor = :uglify
 
 кроме этого, файлопровод вычисляет <i>ERB</i>, что позволяет писать вот такие строки в <i>CSS</i>:
 
-```css
+```css+erb
 .class { background-image: url(<%= asset_path 'image.png' %>) }
 ```
 
 или в <i>JS/Coffee</i> :
 
-```js
+```js+erb
 $('#logo').attr({ src: "<%= asset_path('logo.png') %>" });
 ```
 
