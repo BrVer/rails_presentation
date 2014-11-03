@@ -131,9 +131,11 @@ Active Record предоставляет несколько механизмов
 -  Первичные ключи - <i>id</i> как первичный ключ таблицы.
 
 Создание моделей Active Record:
-    
-    class Product < ActiveRecord::Base
-    end
+
+```ruby
+class Product < ActiveRecord::Base
+end
+```
     
 ### 2.2 Миграции
 
@@ -143,14 +145,16 @@ Active Record предоставляет несколько механизмов
 
 Это создат следующую миграцию:
 
-    class AddPartNumberToProducts < ActiveRecord::Migration
-      def change
-        add_column :products, :part_number, :string
-        add_column :products, :price, :decimal
-        add_index :products, :part_number
-      end
-    end
-    
+```ruby
+class AddPartNumberToProducts < ActiveRecord::Migration
+  def change
+    add_column :products, :part_number, :string
+    add_column :products, :price, :decimal
+    add_index :products, :part_number
+  end
+end
+```
+
 точно так же можно и удалять поля
 
     $ bin/rails generate migration RemovePartNumberFromProducts part_number:string
@@ -217,15 +221,16 @@ Active Record предоставляет несколько механизмов
 
 Валидации используются, чтобы быть уверенными, что только правильные данные сохраняются в вашу базу данных
 
-    class Person < ActiveRecord::Base
-      validates :name, presence: true
-    end
-     
-    Person.create(name: "John Doe").valid? # => true
-    p = Person.create(name: nil).valid? # => false
-    p.errors.messages # => {name:["can't be blank"]} #эти ошибки потом можно отображать во вьюхе
-    p.errors[:name].any? # => true
-    
+```ruby
+class Person < ActiveRecord::Base
+  validates :name, presence: true
+end
+ 
+Person.create(name: "John Doe").valid? # => true
+p = Person.create(name: nil).valid? # => false
+p.errors.messages # => {name:["can't be blank"]} #эти ошибки потом можно отображать во вьюхе
+p.errors[:name].any? # => true
+```    
 
 Следующие методы вызывают валидацию, и сохраняют объект в базу данных только если он валиден:
 
@@ -288,12 +293,14 @@ Active Record предоставляет несколько механизмов
 
 ### 2.4 Колбэки Active Record
 
-    class User < ActiveRecord::Base
-      after_create do |user|
-        puts "You have a user with name #{user.name} and age #{user.age}!"
-      end
-     
-    end
+```ruby
+class User < ActiveRecord::Base
+  after_create do |user|
+    puts "You have a user with name #{user.name} and age #{user.age}!"
+  end
+ 
+end
+```
 
 Cписок всех доступных колбэков Active Record:
 
@@ -322,18 +329,22 @@ Cписок всех доступных колбэков Active Record:
 
 определяем отношения:
 
-    class Customer < ActiveRecord::Base
-      has_many :orders, dependent: :destroy
-    end
-     
-    class Order < ActiveRecord::Base
-      belongs_to :customer
-    end
+```ruby
+class Customer < ActiveRecord::Base
+  has_many :orders, dependent: :destroy
+end
+ 
+class Order < ActiveRecord::Base
+  belongs_to :customer
+end
+```
 
 и потом можно очень удобно этим пользоваться:
 
-    customer.orders                                         # вернёт список заказов определённого кастомера
-    order = customer.create_order(order_name = 'blah blah') # создаст новый заказ для данного кастомера
+```ruby
+customer.orders                                         # вернёт список заказов определённого кастомера
+order = customer.create_order(order_name = 'blah blah') # создаст новый заказ для данного кастомера
+```
 
 типы связей:
 
@@ -392,33 +403,39 @@ Cписок всех доступных колбэков Active Record:
 
 #### кэширование запросов
 
-    customer = Customer.find(10)
-    customer.orders                 # получаем заказы из базы данных
-    .....
-    customer.orders.empty?          # используем кэшированную копию заказов
-    customer.orders(true).empty?    # отказываемся от кэшированной копии заказов
-                                    # и снова обращаемся к базе данных
+```ruby
+customer = Customer.find(10)
+customer.orders                 # получаем заказы из базы данных
+.....
+customer.orders.empty?          # используем кэшированную копию заказов
+customer.orders(true).empty?    # отказываемся от кэшированной копии заказов
+                                # и снова обращаемся к базе данных
+```
 
 #### нетерпеливая загрузка
 
 2 запроса вместо 11:
-    
-    clients = Client.includes(:address).limit(10)
-     
-    clients.each do |client|
-      puts client.address.postcode
-    end
+
+```ruby
+clients = Client.includes(:address).limit(10)
+ 
+clients.each do |client|
+  puts client.address.postcode
+end
+```
 
 #### скоупы
 
-    class Article < ActiveRecord::Base
-      default_scope                     -> { where(deleted_at: nil) }
-      scope :published,                 -> { where(published: true) }
-      scope :published_and_commented,   -> { published.where("comments_count > 0") }
-    end
-    
-    Article.all         # => articles
-    Article.published   # => [published articles where deleted_at is nil]
+```ruby
+class Article < ActiveRecord::Base
+  default_scope                     -> { where(deleted_at: nil) }
+  scope :published,                 -> { where(published: true) }
+  scope :published_and_commented,   -> { published.where("comments_count > 0") }
+end
+
+Article.all         # => articles
+Article.published   # => [published articles where deleted_at is nil]
+```
      
 
 ## 3. Вьюхи и рендеринг
@@ -426,7 +443,7 @@ Cписок всех доступных колбэков Active Record:
 <b>Convention over Configuration в действии:</b>
 
     контроллер:
-      class BooksController < ApplicationController
+    class BooksController < ApplicationController
     end
     
     роутинг:
@@ -448,56 +465,67 @@ Cписок всех доступных колбэков Active Record:
 <b>отрендеренные вьюхи вставляются в макеты :</b>
 
 <i>/app/views/layouts/books.html.erb :</i>
-    
-    <html>
-      <head>
-      <%= yield :head %>
-      </head>
-      <body>
-      <%= yield %>
-      </body>
-    </html>
+
+```html+erb    
+<html>
+  <head>
+  <%= yield :head %>
+  </head>
+  <body>
+  <%= yield %>
+  </body>
+</html>
+```
 
 <i>app/views/books/index.html.erb :</i>
-    
-    <% content_for :head do %>
-      <title>A simple page</title>
-    <% end %>
-     
-    <p>Hello, Rails!</p>
+
+```html+erb
+<% content_for :head do %>
+  <title>A simple page</title>
+<% end %>
+ 
+<p>Hello, Rails!</p>
+```
     
 результат :
-    
-    <html>
-      <head>
-        <title>A simple page</title>
-      </head>
-      <body>
-        <p>Hello, Rails!</p>
-      </body>
-    </html>
 
+```html    
+<html>
+  <head>
+    <title>A simple page</title>
+  </head>
+  <body>
+    <p>Hello, Rails!</p>
+  </body>
+</html>
+```
 
 <b>также во вьюхи можно вставлять партиалы, чтобы ещё лучше всё структурировать:</b>
 
-    <%= render "shared/ad_banner" %>
-    <h1>Products</h1>
-    <p>Here are a few of our fine products:</p>
-    ...
-    <%= render "shared/footer" %>
+```html+erb
+<%= render "shared/ad_banner" %>
+<h1>Products</h1>
+<p>Here are a few of our fine products:</p>
+...
+<%= render "shared/footer" %>
+```
     
 в партиалы можно передаватьлокальные переменные
 
 <b>также очень удобно использовать партиалы для рендеринга коллекций:</b>
 
 <i>index.html.erb</i>
-    
-    <h1>Products</h1>
-    <%= render partial: "product", collection: @products %>
+
+```html+erb
+<h1>Products</h1>
+<%= render partial: "product", collection: @products %>
+```
     
 <i>_product.html.erb</i>
-    
-    <p>Product Name: <%= product.name %></p>
+
+```html+erb
+<p>Product Name: <%= product.name %></p>
+```
 
 <b>хэлперы ресурсных тэгов:</b>
 
@@ -511,6 +539,7 @@ Cписок всех доступных колбэков Active Record:
 
 <b>хэлперы форм</b>
 
+```erb
     <%= form_tag("/search", method: "get") do %>
       <%= label_tag(:q, "Search for:") %>
       <%= text_field_tag(:q) %>
@@ -534,81 +563,89 @@ Cписок всех доступных колбэков Active Record:
       <%= range_field(:product, :discount, in: 1..100) %>
       <%= submit_tag("Search") %>
     <% end %>
-    
+```    
     
 <b>привязка форм к объектам ActiveRecord</b><br/>
 легка и непринуждённа с использованием <i>form_for</i>
 
 <i>articles_controller.rb:</i>
 
-    def new
-      @article = Article.new
-    end
+```ruby
+def new
+  @article = Article.new
+end
+```
     
 <i>articles/new.html.erb:</i>
 
-    <%= form_for @article, url: {action: "create"}, html: {class: "nifty_form"} do |f| %>
-      <%= f.text_field :title %>
-      <%= f.text_area :body, size: "60x12" %>
-      <%= f.file_field :picture %>
-      <%= f.submit "Create" %>
-    <% end %>
-    
+```erb
+<%= form_for @article, url: {action: "create"}, html: {class: "nifty_form"} do |f| %>
+  <%= f.text_field :title %>
+  <%= f.text_area :body, size: "60x12" %>
+  <%= f.file_field :picture %>
+  <%= f.submit "Create" %>
+<% end %>
+```    
 
 <b>формы и связанные объекты</b><br/>
 если у вас есть связанные объекты 
 (например пользователь имеет несколько адресов) - можно создавать вложенные формы:
 
-    <%= form_for @person do |person_form| %>
-      <%= person_form.text_field :name %>
-      <% @person.addresses.each do |address| %>
-        <%= person_form.fields_for address, index: address.id do |address_form|%>
-          <%= address_form.text_field :city %>
-        <% end %>
-      <% end %>
+```erb
+<%= form_for @person do |person_form| %>
+  <%= person_form.text_field :name %>
+  <% @person.addresses.each do |address| %>
+    <%= person_form.fields_for address, index: address.id do |address_form|%>
+      <%= address_form.text_field :city %>
     <% end %>
-
+  <% end %>
+<% end %>
+```
 
 <b>защита от CSRF</b><br/>
 для форм, созданных с помощью хэлперов, добавляется автоматически.<br/>
 для созданных вручную форм есть <i>form_authenticity_token</i>
 
-    <input type="hidden"
-           value="67250ab105eb5ad10851c00a5621854a23af5489"
-           name="authenticity_token"/>
-
+```html
+<input type="hidden"
+       value="67250ab105eb5ad10851c00a5621854a23af5489"
+       name="authenticity_token"/>
+```
 
 
 ## 4. Контроллеры
 
-    class ClientsController < ApplicationController
-      def new           # пустой экшен просто отрендерит new.html.erb
-      end
-    end
-    
+```ruby
+class ClientsController < ApplicationController
+  def new           # пустой экшен просто отрендерит new.html.erb
+  end
+end
+```    
  
 ### 4.1 параметры запроса
 получает, не делая разницы между <i>GET</i> и <i>POST</i>
 
-    class ClientsController < ApplicationController
+```ruby
+class ClientsController < ApplicationController
 
-      def create
-        @client = Client.new(params[:client])
-        if @client.save
-          redirect_to @client
-        else
-          render "new"
-        end
-      end
+  def create
+    @client = Client.new(params[:client])
+    if @client.save
+      redirect_to @client
+    else
+      render "new"
     end
+  end
+end
+```
 
 Rails также отлично конвертит json -> params
 
 params также содержит <i>controller_name</i>, <i>action_name</i>, и другие параметры из роутинга, например:
 
-    get '/clients/:status' => 'clients#index', foo: 'bar'   
-    
-    # /clients/active will hit clients#index with params = {status:'active', foo:'bar'}
+```ruby
+get '/clients/:status' => 'clients#index', foo: 'bar' # /clients/active will hit clients#index with params = {status:'active', foo:'bar'}
+```
   
 ### 4.1 Сессия
 
@@ -625,34 +662,43 @@ params также содержит <i>controller_name</i>, <i>action_name</i>, �
 
 доступ к сессии:
 
-    session[:some_key] = some_value
+```ruby
+session[:some_key] = some_value
+```
     
 <b>Flash</b>
 Cпециальная часть сессии, которая очищается с каждым запросом.
 
 доступ:
 
-    flash[:notice] = "You have successfully logged out."
+```ruby
+flash[:notice] = "You have successfully logged out."
+```
 
 либо как часть редиректа:
 
-    redirect_to root_url, notice: "You have successfully logged out."
-    redirect_to root_url, alert: "You're stuck here!"
-    redirect_to root_url, flash: { referral_code: 1234 }
-    
+```ruby
+redirect_to root_url, notice: "You have successfully logged out."
+redirect_to root_url, alert: "You're stuck here!"
+redirect_to root_url, flash: { referral_code: 1234 }
+````    
     
 отображение <i>flash</i> во вьюхе:
 
-    <% if flash[:just_signed_up] %>
-      <p class="welcome">Welcome to our site!</p>
-    <% end %>
+```html+erb
+<% if flash[:just_signed_up] %>
+  <p class="welcome">Welcome to our site!</p>
+<% end %>
+```
     
 можно продлять жизнь <i>flash</i> с помощью <i>flash.keep / flash.keep(:some_key)</i>
 
 
 ### 4.2 Куки
 
-    cookies[:commenter_name] = 'Boris'
+```ruby
+cookies[:commenter_name] = 'Boris'
+```
 
 есть возможность создавать подписанные и зашифрованные куки
 
@@ -764,28 +810,34 @@ response:
 
 типичный пример:
 
-    class ApplicationController < ActionController::Base
-      before_action :require_login
-     
-      private
-     
-      def require_login
-        unless logged_in?
-          flash[:error] = "You must be logged in to access this section"
-          redirect_to new_login_url # сообщает о переходе на страницу авторизации
-        end
-      end
+```ruby
+class ApplicationController < ActionController::Base
+  before_action :require_login
+ 
+  private
+ 
+  def require_login
+    unless logged_in?
+      flash[:error] = "You must be logged in to access this section"
+      redirect_to new_login_url # сообщает о переходе на страницу авторизации
     end
+  end
+end
+```
     
 можно задавать для каких именно экшенов будет работать фильтр с помощью <i>:only</i>:
 
-    around_action :wrap_in_transaction, only: :show
+```ruby
+around_action :wrap_in_transaction, only: :show
+```
 
 можно отменять использование фильтров в унаследованных контроллерах (для определённых экшенов или вцелом):
 
-    class LoginsController < ApplicationController
-      skip_before_action :require_login, only: [:new, :create]
-    end
+```ruby
+class LoginsController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
+end
+```
 
 фильтры можно описывать как в виде функций, так и в виде классов
 
@@ -796,25 +848,29 @@ response:
 
 basic auth
 
-    class AdminsController < ApplicationController
-      http_basic_authenticate_with name: "humbaba", password: "5baa61e4"
-    end
+```ruby
+class AdminsController < ApplicationController
+  http_basic_authenticate_with name: "humbaba", password: "5baa61e4"
+end
+```
     
 digest auth
 
-    class AdminsController < ApplicationController
-      USERS = { "lifo" => "world" }
-     
-      before_action :authenticate
-     
-      private
-     
-        def authenticate
-          authenticate_or_request_with_http_digest do |username|
-            USERS[username]
-          end
-        end
+```ruby
+class AdminsController < ApplicationController
+  USERS = { "lifo" => "world" }
+ 
+  before_action :authenticate
+ 
+  private
+ 
+    def authenticate
+      authenticate_or_request_with_http_digest do |username|
+        USERS[username]
+      end
     end
+end
+```
     
 
 ### 4.6 Потоки и загрузка файлов
@@ -822,12 +878,13 @@ digest auth
 2 метода: <i>send_file</i> и <i>send_data</i>. 
 <i>send_file</i> посылает уже готовый файл с диска, <i>send_data</i> - сгенерированный
 
-    def download_pdf
-        client = Client.find(params[:id])
-        send_data generate_pdf(client),
-                  filename: "#{client.name}.pdf",
-                  type: "application/pdf"
-                  
+```ruby
+def download_pdf
+    client = Client.find(params[:id])
+    send_data generate_pdf(client),
+              filename: "#{client.name}.pdf",
+              type: "application/pdf"
+```                  
                   
 
 ### 4.7 Обработка ошибок
@@ -835,32 +892,35 @@ digest auth
 по дэфолту, 404 и 500 ошибки приводят к тому, что отдаются <i>public/404.html</i> 
 и <i>public/500.html</i> соответственно
 но это можно переопределить в <i>routes.rb :</i> (Rails 4)
-    
-    match '/404', via: :all, to: 'errors#not_found'
-    match '/422', via: :all, to: 'errors#unprocessable_entity'
-    match '/500', via: :all, to: 'errors#server_error'
 
+```ruby
+match '/404', via: :all, to: 'errors#not_found'
+match '/422', via: :all, to: 'errors#unprocessable_entity'
+match '/500', via: :all, to: 'errors#server_error'
+```
 
 ошибки также можно перехватывать при помощи <i>resсue_from</i>:
 
-    class ApplicationController < ActionController::Base
-      rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
-     
-      private
-        def record_not_found
-          render plain: "404 Not Found", status: 404
-        end
+```ruby
+class ApplicationController < ActionController::Base
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+ 
+  private
+    def record_not_found
+      render plain: "404 Not Found", status: 404
     end
+end
+```
 
 ### 4.8 Навязывание HTTPS
 
-    class DinnerController
-      force_ssl only: :cheeseburger
-      # или
-      force_ssl except: :cheeseburger
-    end
-
-
+```ruby
+class DinnerController
+  force_ssl only: :cheeseburger
+  # или
+  force_ssl except: :cheeseburger
+end
+```
 
 ## 5. Роутинг
 
@@ -868,8 +928,9 @@ digest auth
 
 пример роута:
 
-    get '/patients/:id', to: 'patients#show', as: 'patient'
-    
+```ruby
+get '/patients/:id', to: 'patients#show', as: 'patient'
+```
 
 <b>просмотр всех роутов:</b></br>
 команда <i>rake routes</i> выдаёт примерно такую таблицу:
@@ -885,24 +946,31 @@ digest auth
     
 <b>генерация правильных урлов из кода:</b>
 
-    get '/patients/:id', to: 'patients#show', as: 'patient'
+```ruby
+get '/patients/:id', to: 'patients#show', as: 'patient'
+```
 
 далее можно сделать вот так:</br>
 
 <i>PatientsController.rb</i>
 
-    def some_action
-      @patient = Patient.find(17)
-    end
+```ruby
+def some_action
+  @patient = Patient.find(17)
+end
+```
     
 <i>app/views/patients/some_action.html.erb</i>
 
-    <%= link_to 'Patient Record', patient_path(@patient) %>         #  преобразуется в /patients/17
-
+```html+erb
+<%= link_to 'Patient Record', patient_path(@patient) %>         #  преобразуется в /patients/17
+```
 
 ### 5.1 Ресурсный роутинг
 
-    resources :photos
+```ruby
+resources :photos
+```
 
 данная строка создаёт следующие маршруты:
 
@@ -972,7 +1040,9 @@ digest auth
 
 иногда требуется определить ресурс, доступный только в 1 экземпляре, такой роутинг пишется так:
     
-    resource :geocoder
+```ruby
+resource :geocoder
+```
 
 данный код создаст 6 ресурсных маршрутов и 3 хелпера (по аналогии с <i>resouces</i>)
 
@@ -983,51 +1053,67 @@ digest auth
 
 в роутинге после этого можно сгруппировать их в пространство имён:
 
-    namespace :admin do
-      resources :articles, :comments
-    end
+```ruby
+namespace :admin do
+  resources :articles, :comments
+end
+```
 
 это создаст соответствующие урлы, включающие нэймспэйс (<i>GET	/admin/articles</i> например)
 
 
 также можно задать кастомный базовый урл для ресурса:
 
-    resources :posts, path: '/admin/articles'
+```ruby
+resources :posts, path: '/admin/articles'
+```
     
 или переопределить контроллер:
 
-    resources :photos, :controller => "images"
+```ruby
+resources :photos, :controller => "images"
+```
 
 или название именованных хелперов
 
-    resources :photos, :as => "images"
+```ruby
+resources :photos, :as => "images"
+```
 
 или название некоторых урлов, ведуших к экшенам (название самих экшенов не меняется)
 
-    resources :photos, :path_names => { :new => 'make', :edit => 'change' }
-    
+```ruby
+resources :photos, :path_names => { :new => 'make', :edit => 'change' }
+```
+ 
 или вообще явно задать, какие маршруты ресурса нужно создавать, а какие - нет:
 
-    resources :photos, :only => [:index, :show]
-    resources :photos, :except => :destroy
+```ruby
+resources :photos, :only => [:index, :show]
+resources :photos, :except => :destroy
+```
 
 <b>Вложенные ресурсы</b>   
 
 предположим, имеются две таких модели:
-    
-    class Magazine < ActiveRecord::Base
-      has_many :ads
-    end
-    
-    class Ad < ActiveRecord::Base
-      belongs_to :magazine
-    end
+
+```ruby
+class Magazine < ActiveRecord::Base
+  has_many :ads
+end
+
+class Ad < ActiveRecord::Base
+  belongs_to :magazine
+end
+```
 
 тогда можно сделать вложенный роутинг:
 
-    resources :magazines do
-      resources :ads
-    end
+```ruby
+resources :magazines do
+  resources :ads
+end
+```
     
 что создаст урлы вот такого типа:
 
@@ -1035,12 +1121,13 @@ digest auth
 
 можно тем не менее делать часть экшенов вложенного ресурса вложенными, а часть - невложенными :
 
-    resources :articles do
-      resources :comments, only: [:index, :new, :create]
-    end
-    resources :comments, only: [:show, :edit, :update, :destroy]
-    # в данном примере экшены коллекции - вложенные, а экшены отдельных элементов , требующие id - нет
-
+```ruby
+resources :articles do
+  resources :comments, only: [:index, :new, :create]
+end
+resources :comments, only: [:show, :edit, :update, :destroy]
+# в данном примере экшены коллекции - вложенные, а экшены отдельных элементов , требующие id - нет
+```
 
 <b>Концерты маршрутов (Rails 4)</b>
 
@@ -1049,61 +1136,78 @@ digest auth
 
 Чтобы определить концерн:
 
-    concern :commentable do
-      resources :comments
-    end
-    
-    concern :image_attachable do
-      resources :images, only: :index
-    end
+```ruby
+concern :commentable do
+  resources :comments
+end
+
+concern :image_attachable do
+  resources :images, only: :index
+end
+```
 
 и потом используются концерны вот так:
 
-    resources :messages, concerns: :commentable
-    resources :articles, concerns: [:commentable, :image_attachable]
-    
+```ruby
+resources :messages, concerns: :commentable
+resources :articles, concerns: [:commentable, :image_attachable]
+```    
     
 <b>добавление маршрутов</b>
 
 добавление маршрутов к элементам:
 
-    resources :photos do
-      get 'preview', on: :member
-    end
+```ruby
+resources :photos do
+  get 'preview', on: :member
+end
+```
 
 добавление маршрутов к коллекции:
 
-    resources :photos do
-      get 'search', on: :collection
-    end
+```ruby
+resources :photos do
+  get 'search', on: :collection
+end
+```
     
 
 ### 5.2 Нересурсный роутинг
 
 типичный урл
 
-    get ':controller(/:action(/:id))'
+```ruby
+get ':controller(/:action(/:id))'
+```
     
 вообще, параметров можно передавать сколько угодно:
 
-    get ':controller/:action/:id/with_user/:user_id'
-
+```ruby
+get ':controller/:action/:id/with_user/:user_id'
+```
+    
 последяя строчка обработает урл <i>/photos/show/1/with_user/2</i> и выдаст 
 <i> params:{ controller: 'photos', action: 'show', id: '1', user_id: '2' }</i>
 
 
 можно задавать дэфолтные значения:
 
-    get 'photos/:id', to: 'photos#show', defaults: { format: 'jpg' }
-    
+```ruby
+get 'photos/:id', to: 'photos#show', defaults: { format: 'jpg' }
+```
+        
 <b>именование маршрутов</b>
 
-    get 'exit', to: 'sessions#destroy', as: :logout         # создаст хелперы logout_path и logout_url
-    
+```ruby
+get 'exit', to: 'sessions#destroy', as: :logout         # создаст хелперы logout_path и logout_url
+```
+        
 <b>перенаправление маршрутов</b>
 
-    get '/stories', to: redirect('/articles')
-    
+```ruby
+get '/stories', to: redirect('/articles')
+```
+        
 
 
 ## Всякие разные дополнительные штуки
@@ -1571,40 +1675,42 @@ Sprockets соединяет все <i>JavaScript<i> файлы в один гл
 
 пример <i>manifest.json</i>:
 
-    {
-        "files": {
-            "application-723d1be6cc741a3aabb1cec24276d681.js": {
-                "logical_path": "application.js",
-                "mtime": "2013-07-26T22:55:03-07:00",
-                "size": 302506,
-                "digest": "723d1be6cc741a3aabb1cec24276d681"
-            },
-            "application-12b3c7dd74d2e9df37e7cbb1efa76a6d.css": {
-                "logical_path": "application.css",
-                "mtime": "2013-07-26T22:54:54-07:00",
-                "size": 1560,
-                "digest": "12b3c7dd74d2e9df37e7cbb1efa76a6d"
-            },
-            "favicon-a9c641bf2b81f0476e876f7c5e375969.ico": {
-                "logical_path": "favicon.ico",
-                "mtime": "2013-07-26T23:00:10-07:00",
-                "size": 1406,
-                "digest": "a9c641bf2b81f0476e876f7c5e375969"
-            },
-            "my_image-231a680f23887d9dd70710ea5efd3c62.png": {
-                "logical_path": "my_image.png",
-                "mtime": "2013-07-26T23:00:27-07:00",
-                "size": 6646,
-                "digest": "231a680f23887d9dd70710ea5efd3c62"
-            }
+```ruby
+{
+    "files": {
+        "application-723d1be6cc741a3aabb1cec24276d681.js": {
+            "logical_path": "application.js",
+            "mtime": "2013-07-26T22:55:03-07:00",
+            "size": 302506,
+            "digest": "723d1be6cc741a3aabb1cec24276d681"
         },
-        "assets": {
-            "application.js": "application-723d1be6cc741a3aabb1cec24276d681.js",
-            "application.css": "application-1c5752789588ac18d7e1a50b1f0fd4c2.css",
-            "favicon.ico": "favicona9c641bf2b81f0476e876f7c5e375969.ico",
-            "my_image.png": "my_image-231a680f23887d9dd70710ea5efd3c62.png"
+        "application-12b3c7dd74d2e9df37e7cbb1efa76a6d.css": {
+            "logical_path": "application.css",
+            "mtime": "2013-07-26T22:54:54-07:00",
+            "size": 1560,
+            "digest": "12b3c7dd74d2e9df37e7cbb1efa76a6d"
+        },
+        "favicon-a9c641bf2b81f0476e876f7c5e375969.ico": {
+            "logical_path": "favicon.ico",
+            "mtime": "2013-07-26T23:00:10-07:00",
+            "size": 1406,
+            "digest": "a9c641bf2b81f0476e876f7c5e375969"
+        },
+        "my_image-231a680f23887d9dd70710ea5efd3c62.png": {
+            "logical_path": "my_image.png",
+            "mtime": "2013-07-26T23:00:27-07:00",
+            "size": 6646,
+            "digest": "231a680f23887d9dd70710ea5efd3c62"
         }
+    },
+    "assets": {
+        "application.js": "application-723d1be6cc741a3aabb1cec24276d681.js",
+        "application.css": "application-1c5752789588ac18d7e1a50b1f0fd4c2.css",
+        "favicon.ico": "favicona9c641bf2b81f0476e876f7c5e375969.ico",
+        "my_image.png": "my_image-231a680f23887d9dd70710ea5efd3c62.png"
     }
+}
+```
 
 чтобы ощутить преимущества диджест меток файлов, необходимо настроить вэб-сервер на вечное 
 (или хотябы очень долгое) кэширование. например, для <i>nginx</i> :
@@ -1739,24 +1845,24 @@ end
 
 ##Cucumber
 
-    ```cucumber
-    Story: Returns go to stock
-    
-    In order to keep track of stock
-    As a store owner
-    I want to add items back to stock when they're returned
-    
-    Scenario 1: Refunded items should be returned to stock
-    Given a customer previously bought a black sweater from me
-    And I currently have three black sweaters left in stock
-    When he returns the sweater for a refund
-    Then I should have four black sweaters in stock
-    
-    Scenario 2: Replaced items should be returned to stock
-    Given that a customer buys a blue garment
-    And I have two blue garments in stock
-    And three black garments in stock.
-    When he returns the garment for a replacement in black,
-    Then I should have three blue garments in stock
-    And two black garments in stock
-    ```
+```cucumber
+Story: Returns go to stock
+
+In order to keep track of stock
+As a store owner
+I want to add items back to stock when they're returned
+
+Scenario 1: Refunded items should be returned to stock
+Given a customer previously bought a black sweater from me
+And I currently have three black sweaters left in stock
+When he returns the sweater for a refund
+Then I should have four black sweaters in stock
+
+Scenario 2: Replaced items should be returned to stock
+Given that a customer buys a blue garment
+And I have two blue garments in stock
+And three black garments in stock.
+When he returns the garment for a replacement in black,
+Then I should have three blue garments in stock
+And two black garments in stock
+```
