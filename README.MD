@@ -1632,27 +1632,30 @@ Engine можно рассматривать как миниатюрное пр�
 
 ## RSpec
 
-    ```ruby
-    describe Hash do
-      let(:hash) { Hash[:hello, 'world'] }
-     
-      it { expect(Hash.new).to eq({}) }
-     
-      it "hashes the correct information in a key" do
-        expect(hash[:hello]).to eq('world')
-      end
-     
-      it 'includes key' do
-        hash.keys.include?(:hello).should be true
-      end
-    end
-    ```
+```ruby
+describe Hash do
+  let(:hash) { Hash[:hello, 'world'] }
+ 
+  it { expect(Hash.new).to eq({}) }
+ 
+  it "hashes the correct information in a key" do
+    expect(hash[:hello]).to eq('world')
+  end
+ 
+  it 'includes key' do
+    hash.keys.include?(:hello).should be true
+  end
+end
+```
 
 ## Capybara
 
 ## BDD vs TDD
 
 'BDD is TDD done right' - Dan North <br/>
+
+-  ubiquitous language
+-  testing behavior, not implementation
 <br/>
 <a href="http://lizkeogh.com/2009/11/06/translating-tdd-to-bdd/">http://lizkeogh.com/2009/11/06/translating-tdd-to-bdd</a>
 <table border="1">
@@ -1732,7 +1735,7 @@ Engine можно рассматривать как миниатюрное пр�
     </tbody>
 </table>
   
--  ubiquitous language
+
 
 ##Cucumber
 
