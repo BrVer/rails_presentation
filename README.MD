@@ -442,12 +442,18 @@ Article.published   # => [published articles where deleted_at is nil]
 
 <b>Convention over Configuration в действии:</b>
 
-    контроллер:
-    class BooksController < ApplicationController
-    end
+контроллер:
+
+```ruby
+class BooksController < ApplicationController
+end
+```
     
-    роутинг:
-    resources :books
+роутинг:
+
+```ruby
+resources :books
+```
     
 в таком случае Rails автоматически отрендерит <i>app/views/books/index.html.erb</i> при переходе на адрес /books
 
@@ -1219,15 +1225,17 @@ Active Support – это компонент Ruby on Rails, отвечающий
 
 например, у хэшей появляется метод <i>to_xml</i>:
 
-    require 'active_support/core_ext'
-    
-    {"foo" => 1, "bar" => 2}.to_xml
-    # =>
-    # <?xml version="1.0" encoding="UTF-8"?>
-    # <hash>
-    #   <foo type="integer">1</foo>
-    #   <bar type="integer">2</bar>
-    # </hash>
+```ruby
+require 'active_support/core_ext'
+
+{"foo" => 1, "bar" => 2}.to_xml
+# =>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <hash>
+#   <foo type="integer">1</foo>
+#   <bar type="integer">2</bar>
+# </hash>
+```
     
 ## 7 API интернационализации
    
@@ -1237,38 +1245,43 @@ Active Support – это компонент Ruby on Rails, отвечающий
 
 в самом простом рассмотрении работает он так: сначала нужно добавить переводы фраз:
 
-    # config/locales/en.yml
-    en:
-      hello_world: Hello world!
-      hello_flash: Hello flash!
-     
-    # config/locales/pirate.yml
-    pirate:
-      hello_world: Ahoy World
-      hello_flash: Ahoy Flash
+```yml
+# config/locales/en.yml
+en:
+  hello_world: Hello world!
+  hello_flash: Hello flash!
+
+# config/locales/pirate.yml
+pirate:
+  hello_world: Ahoy World
+  hello_flash: Ahoy Flash
+```
       
 затем добавить код для определения локали из запроса, например вот такой 
 (самый простой метод, хоть и не самый красивый):
 
-    before_filter :set_locale
-     
-    def set_locale
-      I18n.locale = params[:locale] || I18n.default_locale
-    end
+```ruby
+before_filter :set_locale
+ 
+def set_locale
+  I18n.locale = params[:locale] || I18n.default_locale
+end
+```
 
 затем можно использовать гем так:
 
-    # app/controllers/home_controller.rb
-    class HomeController < ApplicationController
-      def index
-        flash[:notice] = t(:hello_flash)
-      end
-    end
-     
-    # app/views/home/index.html.erb
-    <h1><%=t :hello_world %></h1>
-    <p><%= flash[:notice] %></p>
-    
+```ruby
+# app/controllers/home_controller.rb
+class HomeController < ApplicationController
+  def index
+    flash[:notice] = t(:hello_flash)
+  end
+end
+ 
+# app/views/home/index.html.erb
+<h1><%=t :hello_world %></h1>
+<p><%= flash[:notice] %></p>
+```    
 
 ## 8 Action Mailer
 
@@ -1278,46 +1291,51 @@ Action Mailer позволяет отправлять электронные п�
 
 Работает очень просто:
 
-<i>app/mailers/user_mailer.rb<i>
+```ruby
+# app/mailers/user_mailer.rb
 
-    class UserMailer < ActionMailer::Base
-      default :from => "notifications@example.com"
-     
-      def welcome_email(user)
-        @user = user
-        @url  = "http://example.com/login"
-        mail(:to => user.email, :subject => "Welcome to My Awesome Site")
-      end
-     
-    end
+class UserMailer < ActionMailer::Base
+  default :from => "notifications@example.com"
+ 
+  def welcome_email(user)
+    @user = user
+    @url  = "http://example.com/login"
+    mail(:to => user.email, :subject => "Welcome to My Awesome Site")
+  end
+ 
+end
+```
 
-<i>app/views/user_mailer/welcome_email.html.erb<i>
+```html+erb
+<!--app/views/user_mailer/welcome_email.html.erb-->
     
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-      </head>
-      <body>
-        <h1>Welcome to example.com, <%= @user.name %></h1>
-        <p>
-          You have successfully signed up to example.com,
-          your username is: <%= @user.login %>.<br/>
-        </p>
-        <p>
-          To login to the site, just follow this link: <%= @url %>.
-        </p>
-        <p>Thanks for joining and have a great day!</p>
-      </body>
-    </html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Welcome to example.com, <%= @user.name %></h1>
+    <p>
+      You have successfully signed up to example.com,
+      your username is: <%= @user.login %>.<br/>
+    </p>
+    <p>
+      To login to the site, just follow this link: <%= @url %>.
+    </p>
+    <p>Thanks for joining and have a great day!</p>
+  </body>
+</html>
+```
     
 (также можно добавить <i>app/views/user_mailer/welcome_email.text.erb</i> для поддержки текстовых версий)
 
 
 ну и дальше письма отправляются очень просто:
 
-    UserMailer.welcome_email(@user).deliver
-
+```ruby
+UserMailer.welcome_email(@user).deliver
+```
 
 ## 9 Отладка
 
@@ -1329,22 +1347,28 @@ Action Mailer позволяет отправлять электронные п�
 
 <b>logger</b>
 
-    Rails.logger = Logger.new(STDOUT)
+```ruby
+Rails.logger = Logger.new(STDOUT)
+```
     
 уровни лога:
 
-    :debug, :info, :warn, :error, :fatal, :unknown
+```ruby
+:debug, :info, :warn, :error, :fatal, :unknown
+```
 
 задание уровня:
 
-    config.log_level = :warn # В любом инициализаторе среды, или
-    ActiveRecord::Base.logger.level = 0 # в любое время
-
+```ruby
+config.log_level = :warn # В любом инициализаторе среды, или
+ActiveRecord::Base.logger.level = 0 # в любое время
+```
 
 использование:
 
-    logger.info "Processing the request..."
-    
+```ruby
+logger.info "Processing the request..."
+```    
 
 <b>gem debugger</b>
 
@@ -1445,11 +1469,11 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 
 свои задачи:
 
-    desc "I am short, but comprehensive description for my cool task"
-    task task_name: [:prerequisite_task, :another_task_we_depend_on] do
-      # Вся магия тут
-      # Разрешен любой код Ruby
-    end
+desc "I am short, but comprehensive description for my cool task"
+task task_name: [:prerequisite_task, :another_task_we_depend_on] do
+  # Вся магия тут
+  # Разрешен любой код Ruby
+end
     
 вызов задач:
     
@@ -1463,7 +1487,9 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 
 включить:
 
-    config.action_controller.perform_caching = true
+```ruby
+config.action_controller.perform_caching = true
+```
 
 доступны 3 механизма:
 
@@ -1474,31 +1500,35 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 
 кэширование страницы (в <i>rails 4</i> перемещено из классов ядра в gem <i>'actionpack-page_caching'</i>)
 
-    class ProductsController < ActionController
-     
-      caches_page :index
-     
-      def index
-        @products = Products.all
-      end
-    end
+```ruby
+class ProductsController < ActionController
+ 
+  caches_page :index
+ 
+  def index
+    @products = Products.all
+  end
+end
+```
 
 кэширование экшена (в <i>rails 4</i> перемещено из классов ядра в gem <i>'actionpack-action_caching'</i>)
 
-    class ProductsController < ActionController
-     
-      before_filter :authenticate
-      caches_action :index
-     
-      def index
-        @products = Product.all
-      end
-     
-      def create
-        expire_action :action => :index
-      end
-     
-    end
+```ruby
+class ProductsController < ActionController
+ 
+  before_filter :authenticate
+  caches_action :index
+ 
+  def index
+    @products = Product.all
+  end
+ 
+  def create
+    expire_action :action => :index
+  end
+ 
+end
+```
 
 кэширование фрагмента
 
@@ -1506,66 +1536,74 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 кэшировать эту часть страницы, но хотите кэшировать часть страницы, отображающей все 
 доступные продукты, можете использовать следующий кусок кода:
 
-    <% Order.find_recent.each do |o| %>
-      <%= o.buyer.name %> bought <%= o.product.name %>
-    <% end %>
-     
-    <% cache do %>
-      All available products:
-      <% Product.all.each do |p| %>
-        <%= link_to p.name, product_url(p) %>
-      <% end %>
-    <% end %>
-    
+```html+erb
+<% Order.find_recent.each do |o| %>
+  <%= o.buyer.name %> bought <%= o.product.name %>
+<% end %>
+ 
+<% cache do %>
+  All available products:
+  <% Product.all.each do |p| %>
+    <%= link_to p.name, product_url(p) %>
+  <% end %>
+<% end %>
+```    
     
 если хотите кэшировать несколько фрагментов на экшн, следует предоставить <i>action_suffix</i> в вызове cache:
 
-    <% cache(:action => 'recent', :action_suffix => 'all_products') do %>
-      All available products:
+```html+erb
+<% cache(:action => 'recent', :action_suffix => 'all_products') do %>
+  All available products:
+```
 
 инвалидация:
 
-    expire_fragment(:controller => 'products', :action => 'recent', :action_suffix => 'all_products')
-
+```ruby
+expire_fragment(:controller => 'products', :action => 'recent', :action_suffix => 'all_products')
+```
 
 глобальные фрагменты (не привязаны к экшену):
 
-    <% cache('all_available_products') do %>
-      All available products:
-    <% end %>
+```html+erb
+<% cache('all_available_products') do %>
+  All available products:
+<% end %>
+```
 
 <b>Уборщики (sweepers)</b>
 
 представляют собой обсерверы, автоматически инвалидирующие кэш при изменении состояния объектов
 (в <i>rails 4</i> перемещено из классов ядра в gem <i>'rails-observers'</i>)
 
-    class ProductSweeper < ActionController::Caching::Sweeper
-      observe Product # This sweeper is going to keep an eye on the Product model
-     
-      # Если наш уборщик обнаружит, что Product был создан, вызываем это
-      def after_create(product)
-        expire_cache_for(product)
-      end
-     
-      # Если наш уборщик обнаружит, что Product был обновлен, вызываем это
-      def after_update(product)
-        expire_cache_for(product)
-      end
-     
-      # Если наш уборщик обнаружит, что Product был удален, вызываем это
-      def after_destroy(product)
-        expire_cache_for(product)
-      end
-     
-      private
-      def expire_cache_for(product)
-        # Прекращает страницу list теперь, когда мы добавили новый продукт
-        expire_page(:controller => 'products', :action => 'index')
-     
-        # Прекращает фрагмент
-        expire_fragment('all_available_products')
-      end
-    end
+```ruby
+class ProductSweeper < ActionController::Caching::Sweeper
+  observe Product # This sweeper is going to keep an eye on the Product model
+ 
+  # Если наш уборщик обнаружит, что Product был создан, вызываем это
+  def after_create(product)
+    expire_cache_for(product)
+  end
+ 
+  # Если наш уборщик обнаружит, что Product был обновлен, вызываем это
+  def after_update(product)
+    expire_cache_for(product)
+  end
+ 
+  # Если наш уборщик обнаружит, что Product был удален, вызываем это
+  def after_destroy(product)
+    expire_cache_for(product)
+  end
+ 
+  private
+  def expire_cache_for(product)
+    # Прекращает страницу list теперь, когда мы добавили новый продукт
+    expire_page(:controller => 'products', :action => 'index')
+ 
+    # Прекращает фрагмент
+    expire_fragment('all_available_products')
+  end
+end
+```
 
 хранилища:
 
@@ -1577,16 +1615,18 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 
 <b>conditional GET</b>
 
-    class ProductsController < ApplicationController
-     
-      # Это автоматически отошлет :not_modified, если запрос свежий,
-      # и отрендерит дефолтный шаблон (product.*), если он устарел.
-     
-      def show
-        @product = Product.find(params[:id])
-        fresh_when :last_modified => @product.published_at.utc, :etag => @product
-      end
-    end
+```ruby
+class ProductsController < ApplicationController
+ 
+  # Это автоматически отошлет :not_modified, если запрос свежий,
+  # и отрендерит дефолтный шаблон (product.*), если он устарел.
+ 
+  def show
+    @product = Product.find(params[:id])
+    fresh_when :last_modified => @product.published_at.utc, :etag => @product
+  end
+end
+```
 
 ## 12 Asset Pipeline
 
@@ -1613,14 +1653,18 @@ Sprockets соединяет все <i>JavaScript<i> файлы в один гл
 Поддерживаемые языки по умолчанию: Sass для CSS, CoffeeScript для JS и ERB для обоих.
 
 включить:
-    
-    #config/application.rb
-    require "sprockets/railtie"
+
+```ruby
+#config/application.rb
+require "sprockets/railtie"
+```
 
 установить методы компрессии ресурсов:
 
-    config.assets.css_compressor = :yui
-    config.assets.js_compressor = :uglify
+```ruby
+config.assets.css_compressor = :yui
+config.assets.js_compressor = :uglify
+```
 
 использование:
 
@@ -1640,11 +1684,15 @@ Sprockets соединяет все <i>JavaScript<i> файлы в один гл
 
 кроме этого, файлопровод вычисляет <i>ERB</i>, что позволяет писать вот такие строки в <i>CSS</i>:
 
-    .class { background-image: url(<%= asset_path 'image.png' %>) }
+```css
+.class { background-image: url(<%= asset_path 'image.png' %>) }
+```
 
 или в <i>JS/Coffee</i> :
 
-    $('#logo').attr({ src: "<%= asset_path('logo.png') %>" });
+```js
+$('#logo').attr({ src: "<%= asset_path('logo.png') %>" });
+```
 
 для <i>SASS</i> используется гем <i>sass-rails</i>, предоставляющий хэлперы <i>-url</i> и <i>-path</i>, 
 например <i>image-url("rails.png")</i> становится <i>url(/assets/rails.png)</i>
@@ -1653,14 +1701,17 @@ Sprockets соединяет все <i>JavaScript<i> файлы в один гл
 пример продакшена:
 данный код
 
-    <%= javascript_include_tag "application" %>
-    <%= stylesheet_link_tag "application" %>
+```erb
+<%= javascript_include_tag "application" %>
+<%= stylesheet_link_tag "application" %>
+```
     
 создаст что-то наподобие этого:
     
-    <script src="/assets/application-908e25f4bf641868d8683022a5b62f54.js"></script>
-    <link href="/assets/application-4dd5b109ee3439da54f5bdfd78a80473.css" media="screen" rel="stylesheet" />
-
+```html
+<script src="/assets/application-908e25f4bf641868d8683022a5b62f54.js"></script>
+<link href="/assets/application-4dd5b109ee3439da54f5bdfd78a80473.css" media="screen" rel="stylesheet" />
+```
 
 <b>Файлы манифеста и директивы</b>
 
@@ -1715,14 +1766,15 @@ Sprockets соединяет все <i>JavaScript<i> файлы в один гл
 чтобы ощутить преимущества диджест меток файлов, необходимо настроить вэб-сервер на вечное 
 (или хотябы очень долгое) кэширование. например, для <i>nginx</i> :
 
-    location ~ ^/assets/ {
-      expires 1y;
-      add_header Cache-Control public;
-      gzip_static on; # to serve pre-gzipped version
-      add_header ETag "";
-      break;
-    }
-
+```nginx
+location ~ ^/assets/ {
+  expires 1y;
+  add_header Cache-Control public;
+  gzip_static on; # to serve pre-gzipped version
+  add_header ETag "";
+  break;
+}
+```
 
 ## 13 Engine
 
