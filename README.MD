@@ -1496,16 +1496,16 @@ Rails 4 автоматически добавляет гемы <i>sass-rails, co
 основные фишки:
 
 Cоединение ресурсов.
-Sprockets соединяет все <i>JavaScript</i> файлы в один главный файл <i>.js</i> и все <i>CSS</i> файлы в один главный файл 
+Sprockets соединяет все <i>JavaScript<i> файлы в один главный файл <i>.js</i> и все <i>CSS</i> файлы в один главный файл 
 <i>.css</i>. Можно настроить эту стратегию, сгруппировав файлы любым способом. В <i>production</i>, <i>Rails</i> 
 вставляет метку <i>MD5</i> в каждое имя файла, таким образом файл кэшируется браузером. Кэш можно сделать 
 недействительным, изменив эту метку, что происходит автоматически каждый раз, когда изменяется содержимое файла.
 
 Минимизация или сжатие ресурсов. 
-Для <i>CSS</i> выполняется путем удаления пробелов и комментов. Для <i>JS</i> могут быть применены более сложные процессы. 
+Для <i>CSS<i> выполняется путем удаления пробелов и комментов. Для <i>JS</i> могут быть применены более сложные процессы. 
 
 Позволяет писать эти ресурсы на языке высшего уровня с дальнейшей прекомпиляцией до фактического ресурса. 
-Поддерживаемые языки по умолчанию: <i>Sass</i> для <i>CSS</i>, <i>CoffeeScript</i> для <i>JS</i> и <i>ERB</i> для обоих.
+Поддерживаемые языки по умолчанию: Sass для CSS, CoffeeScript для JS и ERB для обоих.
 
 включить:
     
@@ -1623,45 +1623,136 @@ Engine можно рассматривать как миниатюрное пр�
 Приложение Rails фактически всего лишь "прокачанный" engine с классом Rails::Application, 
 унаследовавшим большую часть своего поведения от Rails::Engine.
 
-## 14 Тестирование
 
+# TDD, BDD
 
-<b>UNIT-тесты для моделей</b>
+суть: <br/>
+<img src="images/Test-driven-development-ru.png"/>
 
+## RSpec
 
-Перед началом тестирования нужно загнать данные в БД.
-Эти данные хранятся в фикстурах. Фикстуры хранятся в <i>test/fixtures</i> и могут быть описаны в YAML или кодом в ERB.
-
-YAML:
-
-    david:
-     name: David Heinemeier Hansson
-     birthday: 1979-10-15
-     profession: Systems development
+    ```ruby
+    describe Hash do
+      let(:hash) { Hash[:hello, 'world'] }
      
-    steve:
-     name: Steve Ross Kellock
-     birthday: 1974-09-27
-     profession: guy with keyboard
+      it { expect(Hash.new).to eq({}) }
      
-ERB:
-
-    <% 1000.times do |n| %>
-    user_<%= n %>:
-      username: <%= "user%03d" % n %>
-      email: <%= "user%03d@example.com" % n %>
-    <% end %>
-    
-
-создание тестов:
-
-<i>test/unit/post_test.rb:<i>
-    
-    require 'test_helper'
+      it "hashes the correct information in a key" do
+        expect(hash[:hello]).to eq('world')
+      end
      
-    class PostTest < ActiveSupport::TestCase
-      # Replace this with your real tests.
-      test "the truth" do
-          assert true
-        end
+      it 'includes key' do
+        hash.keys.include?(:hello).should be true
+      end
     end
+    ```
+
+## Capybara
+
+## BDD vs TDD
+
+'BDD is TDD done right' - Dan North <br/>
+<br/>
+<a href="http://lizkeogh.com/2009/11/06/translating-tdd-to-bdd/">http://lizkeogh.com/2009/11/06/translating-tdd-to-bdd</a>
+<table border="1">
+    <tbody>
+        <tr>
+            <th>TDD</th>
+            <th>BDD</th>
+        </tr>
+        <tr>
+            <td>test</td>
+            <td>example</td>
+        </tr>
+        <tr>
+            <td>class under test</td>
+            <td>class we’re describing </td>
+        </tr>
+        <tr>
+            <td>method under test</td>
+            <td>valuable behaviour</td>
+        </tr>
+        <tr>
+            <td>what to test</td>
+            <td>why is this class valuable? </td>
+        </tr>
+        <tr>
+            <td>how to test</td>
+            <td>how do I want to use this class? </td>
+        </tr>
+        <tr>
+            <td>interface </td>
+            <td>role </td>
+        </tr>
+        <tr>
+            <td>mock</td>
+            <td>collaborator playing &lt;this&gt; role </td>
+        </tr>
+        <tr>
+            <td>design</td>
+            <td>responsibility </td>
+        </tr>
+        <tr>
+            <td>passing</td>
+            <td>working, providing value </td>
+        </tr>
+        <tr>
+            <td>failing</td>
+            <td>should it do what I’ve described? </td>
+        </tr>
+        <tr>
+            <td>verify that</td>
+            <td>ensure that </td>
+        </tr>
+        <tr>
+            <td>assert that</td>
+            <td>ensure that </td>
+        </tr>
+        <tr>
+            <td>returns true / false</td>
+            <td>tells me that… </td>
+        </tr>
+        <tr>
+            <td>returns &lt;object&gt;</td>
+            <td>gives me… </td>
+        </tr>
+        <tr>
+            <td>implements &lt;interface&gt;</td>
+            <td>provides &lt;the benefit of the role&gt;</td>
+        </tr>
+        <tr>
+            <td>pinning the code down so it won’t break</td>
+            <td>making the code easy to use, understand and change. </td>
+        </tr>
+        <tr>
+            <td>100% coverage</td>
+            <td>Please, come change my code. I believe I’ve given you enough information to do this safely.</td>
+        </tr>
+    </tbody>
+</table>
+  
+-  ubiquitous language
+
+##Cucumber
+
+    ```cucumber
+    Story: Returns go to stock
+    
+    In order to keep track of stock
+    As a store owner
+    I want to add items back to stock when they're returned
+    
+    Scenario 1: Refunded items should be returned to stock
+    Given a customer previously bought a black sweater from me
+    And I currently have three black sweaters left in stock
+    When he returns the sweater for a refund
+    Then I should have four black sweaters in stock
+    
+    Scenario 2: Replaced items should be returned to stock
+    Given that a customer buys a blue garment
+    And I have two blue garments in stock
+    And three black garments in stock.
+    When he returns the garment for a replacement in black,
+    Then I should have three blue garments in stock
+    And two black garments in stock
+    ```
