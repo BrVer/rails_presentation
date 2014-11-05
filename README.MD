@@ -2452,4 +2452,4 @@ end
 
 ## интересные ссылки по TDD/BDD
 
--  http://habrahabr.ru/post/111480/ - 2011 ствтья, но вкратце про Cucumber/RSpec/Capybara/FactoryGirl там есть
+-  http://habrahabr.ru/post/111480/ - статья за 2011 год, но вкратце про Cucumber/RSpec/Capybara/FactoryGirl там есть
