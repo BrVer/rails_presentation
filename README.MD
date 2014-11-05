@@ -2167,23 +2167,6 @@ Feature: Feedback when entering invalid credit card details
     And I should see a message telling me the expiry date must be wrong
 ```
 
-Step definitions:
-
-```ruby
-Given /^the input "([^"]*)"$/ do |input|
-  @input = input
-end
-
-When /^the calculator is run$/ do
-  @output = `ruby calc.rb #{@input}`
-  raise('Command failed!') unless $?.success?
-end
-
-Then /^the output should be "([^"]*)"$/ do |expected_output|
-  expect(@output).to eq(expected_output)
-end
-```
-
 Scenario outline
 
 ```cucumber
@@ -2208,6 +2191,39 @@ speed up transactions for users.
       | $100    | $200       | see an error message  | $450      |
       | $0      | $50        | see an error message  | $400      |
 ```
+
+данный код на самом деле создаст 
+
+```console
+4 scenarios (4 undefined)
+16 steps (16 undefined)
+```
+
+Step definitions:
+
+```ruby
+Given(/^I have \$(\d+) in my account$/) do |amount|
+  #code here
+end
+
+Given(/^I choose to withdraw the fixed amount of \$(\d+)$/) do |amount|
+  #code here
+end
+
+Given(/^I should receive \$(\d+) cash$/) do |amount|
+  #code here
+end
+
+Given(/^the balance of my account should be \$(\d+)$/) do |amount|
+  #code here
+end
+
+Given(/^I should see an error message$/) do
+  #code here
+end
+```
+
+
 
 схема взаимодействия:
 
