@@ -2012,7 +2012,7 @@ page.execute_script("$('body').empty()")
 
 ```ruby
 accept_alert
-dismiss_confirm do
+dismiss_confirm
 accept_prompt
 ```
 
@@ -2029,6 +2029,7 @@ save_and_open_screenshot
 с помощью Capybara.default_wait_time = 5
 
 ### using with RSpec
+
 ```ruby
 describe "the signin process", :type => :feature do
   before :each do
@@ -2133,33 +2134,226 @@ end
 </table>
   
 
-
 ##Cucumber
 
+### Компоненты:
+
+Gherkin features
+
 ```cucumber
-Story: Returns go to stock
+Feature: Feedback when entering invalid credit card details
 
-In order to keep track of stock
-As a store owner
-I want to add items back to stock when they're returned
+  In user testing we've seen a lot of people who made mistakes
+  entering their credit card. We need to be as helpful as possible
+  here to avoid losing users at this crucial stage of the
+  transaction.
 
-Scenario 1: Refunded items should be returned to stock
-Given a customer previously bought a black sweater from me
-And I currently have three black sweaters left in stock
-When he returns the sweater for a refund
-Then I should have four black sweaters in stock
+  Background:
+    Given I have chosen some items to buy
+    And I am about to enter my credit card details
 
-Scenario 2: Replaced items should be returned to stock
-Given that a customer buys a blue garment
-And I have two blue garments in stock
-And three black garments in stock.
-When he returns the garment for a replacement in black,
-Then I should have three blue garments in stock
-And two black garments in stock
+  Scenario: Credit card number too short
+    When I enter a card number that's only 15 digits long
+    And all the other details are correct
+    And I submit the form
+    Then the form should be redisplayed
+    And I should see a message advising me of the correct number of digits
+
+  Scenario: Expiry date invalid
+    When I enter a card expiry date that's in the past
+    And all the other details are correct
+    And I submit the form
+    Then the form should be redisplayed
+    And I should see a message telling me the expiry date must be wrong
 ```
+
+Step definitions:
+
+```ruby
+Given /^the input "([^"]*)"$/ do |input|
+  @input = input
+end
+
+When /^the calculator is run$/ do
+  @output = `ruby calc.rb #{@input}`
+  raise('Command failed!') unless $?.success?
+end
+
+Then /^the output should be "([^"]*)"$/ do |expected_output|
+  expect(@output).to eq(expected_output)
+end
+```
+
+Scenario outline
+
+```cucumber
+Feature: Withdraw Fixed Amount
+
+The "Withdraw Cash" menu contains several fixed amounts to
+speed up transactions for users.
+
+  Scenario Outline: Withdraw fixed amount
+    Given I have <Balance> in my account
+    When I choose to withdraw the fixed amount of <Withdrawal>
+    Then I should <Outcome>
+    And the balance of my account should be <Remaining>
+    
+    Examples:Successful withdrawal
+      | Balance | Withdrawal | Outcome               | Remaining |
+      | $500    | $50        | receive $50 cash      | $450      |
+      | $500    | $100       | receive $100 cash     | $400      |
+    
+    Examples:Successful withdrawal
+      | Balance | Withdrawal | Outcome               | Remaining |
+      | $100    | $200       | see an error message  | $450      |
+      | $0      | $50        | see an error message  | $400      |
+```
+
+схема взаимодействия:
+
+<img src="images/cucumber_scheme.png"/>
+
+
+### FLOW:
+
+<img src="images/cucumber_execute_scenario_flowchart.png"/>
+
+STEP 1: Creating features
+
+```cucumber
+Feature: Adding
+
+  Feature: Adding
+  Scenario: Add two numbers
+  Given the input "2+2"
+  When the calculator is run
+  Then the output should be "4"
+```
+STEP 2: run 'cucumber'
+
+```console
+$ cucumber
+
+Feature: Adding
+  Scenario: Add two numbers
+    Given the input "2+2"
+    When the calculator is run
+    Then the output should be "4"
+
+1 scenario (1 undefined)
+3 steps (3 undefined)
+0m0.003s
+
+You can implement step definitions for undefined steps with these snippets:
+
+Given /^the input "([^"]*)"$/ do |arg1|
+  pending # express the regexp above with the code you wish you had
+end
+
+When /^the calculator is run$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the output should be "([^"]*)"$/ do |arg1|
+  pending # express the regexp above with the code you wish you had
+end
+
+If you want snippets in a different programming language,
+just make sure a file with the appropriate file extension
+exists where cucumber looks for step definitions.
+```
+
+STEP3: Creating step definitions
+
+```ruby
+Given /^the input "([^"]*)"$/ do |arg1|
+  pending # express the regexp above with the code you wish you had
+end
+
+When /^the calculator is run$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the output should be "([^"]*)"$/ do |arg1|
+  pending # express the regexp above with the code you wish you had
+end
+```
+
+STEP 4: run 'cucumber' again and see tests pending:
+
+```console
+Feature: Adding
+  Scenario: Add two numbers
+    Given the input "2+2"
+    When the calculator is run
+      TODO (Cucumber::Pending)
+      ./features/step_definitions/calculator_steps.rb:9
+      features/adding.feature:5
+    Then the output should be "4"
+1 scenario (1 pending)
+3 steps (1 skipped, 1 pending, 1 passed)
+0m0.002s
+```
+
+STEP 5: modify step definition
+
+```ruby
+When /^the calculator is run$/ do
+  @output = `ruby calc.rb #{@input}`
+  raise('Command failed!') unless $?.success?
+end
+```
+
+STEP 6: run 'cucumber' again and see tests fails:
+
+```console
+Feature: Adding
+  Scenario: Add two numbers
+    Given the input "2+2"
+ruby: No such file or directory -- calc.rb (LoadError)
+    When the calculator is run
+      Command failed! (RuntimeError)
+      ./features/step_definitions/calculator_steps.rb:10
+      features/adding.feature:5
+    Then the output should be "4"
+
+Failing Scenarios:
+cucumber features/adding.feature:3
+
+1 scenario (1 failed)
+3 steps (1 failed, 1 skipped, 1 passed)
+0m0.027s
+```
+
+STEP 7: implement functionality:
+
+```ruby
+#calculator.rb
+print eval(ARGV[0])
+```
+
+STEP 8: run cucumber, see step pass, go to the next step (return to STEP 5)
+
+
+### поддерживает кучу языков, например:
+
+```cucumber
+# language: no
+Egenskap: Summering
+  For å unngå at firmaet går konkurs
+  Må regnskapsførerere bruke en regnemaskin for å legge sammen tall
+
+  Scenario: to tall
+    Gitt at jeg har tastet inn 5
+    Og at jeg har tastet inn 7
+    Når jeg summerer
+    Så skal resultatet være 12
+```
+
 
 ### Use rspec and capybara with cucumber
 
+```ruby
 When /I sign in/ do
   visit '/sessions/new'
     within("#session") do
@@ -2172,3 +2366,74 @@ end
 Then /I should be logged in/ do
   expect(page).to have_content 'Success'
 end
+```
+
+
+##FactoryGirl
+
+
+пример фабрики:
+
+```ruby
+# spec/factories/user.rb
+FactoryGirl.define do
+  factory :user do
+    sequence(:nickname) { |n| "user_#{n}" }
+    sequence(:email) { |n| "email_#{n}@email.com" }
+ 
+    first_name 'Test'
+    last_name 'User'
+    password '123456'
+    password_confirmation '123456'
+ 
+    factory :reader_user do
+      role 'reader'
+    end
+ 
+    factory :admin_user do
+      role 'admin'
+    end
+ 
+    factory :moderator_user do
+      role 'moderator'
+    end
+  end
+end
+```
+
+использование фабрики:
+
+```ruby
+FactoryGirl.create :factory_name # создает и сохраняет в БД запись соответствующую фабрике factory_name.
+FactoryGirl.build :factory_name # метод аналогичен .create, но запись в БД не происходит.
+FactoryGirl.attributes_for :factory_name # возвращает хэш формата { attribute: value } для свойств.
+```
+
+пример использования:
+
+```ruby
+describe User do
+  #...
+  describe 'helpers' do
+    before :all do
+      @user = FactoryGirl.create :reader_user
+      @admin = FactoryGirl.create :admin_user
+      @moderator = FactoryGirl.create :moderator_user
+    end
+ 
+    describe "reader" do
+      subject { @user }
+ 
+      its(:full_name) { should == "#{@user.first_name} #{@user.last_name}" }
+      its(:is_reader?) { should be_true }
+    end
+    #...
+  end
+end
+```
+
+обычно используется вместе с DatabaseCleaner
+
+## интересные ссылки по TDD/BDD
+
+-  http://habrahabr.ru/post/111480/ - 2011 ствтья, но вкратце про Cucumber/RSpec/Capybara/FactoryGirl там есть
