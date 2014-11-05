@@ -1807,7 +1807,245 @@ describe Hash do
 end
 ```
 
+###nested groups
+
+```ruby
+RSpec.describe Order do
+  context "with no items" do
+    it "behaves one way" do
+      # ...
+    end
+  end
+
+  context "with one item" do
+    it "behaves another way" do
+      # ...
+    end
+  end
+end
+```
+
+###shared collections
+
+```ruby
+RSpec.shared_examples "collections" do
+  it "is empty when first created" do
+    expect(described_class.new).to be_empty
+  end
+end
+
+RSpec.describe Array do
+  include_examples "collections"
+end
+
+RSpec.describe Hash do
+  include_examples "collections"
+end
+```
+
+### expectations
+
+```ruby
+expect(actual).to eq(expected)  # passes if actual == expected
+expect(actual).to eql(expected) # passes if actual.eql?(expected)
+expect(actual).to be(expected)    # passes if actual.equal?(expected)
+expect(actual).to equal(expected) # passes if actual.equal?(expected)
+expect(actual).to be >  expected  # >, <, >=, <=
+expect(actual).to be_within(delta).of(expected)
+expect(actual).to match(/expression/) #regexp
+expect(actual).to be_an_instance_of(expected) # passes if actual.class == expected
+expect(actual).to be_a(expected)              # passes if actual.is_a?(expected)
+expect(actual).to be_truthy # passes if actual is truthy (not nil or false)
+expect(actual).to be true   # passes if actual == true
+expect(actual).to be_falsy  # passes if actual is falsy (nil or false)
+expect(actual).to be false  # passes if actual == false
+expect(actual).to be_nil    # passes if actual is nil
+expect { ... }.to raise_error
+expect { ... }.to raise_error(ErrorClass)
+expect { ... }.to raise_error("message")
+expect { ... }.to raise_error(ErrorClass, "message")
+expect(1..10).to cover(3)
+expect(actual).to include(expected)
+expect(actual).to start_with(expected)
+expect(actual).to end_with(expected)
+expect(actual).to match_array(expected_array)
+expect { |b| 5.tap(&b) }.to yield_control # passes regardless of yielded args
+expect { |b| yield_if_true(true, &b) }.to yield_with_no_args # passes only if no args are yielded
+expect { |b| 5.tap(&b) }.to yield_with_args(5)
+expect { |b| 5.tap(&b) }.to yield_with_args(Fixnum)
+expect { |b| "a string".tap(&b) }.to yield_with_args(/str/)
+expect { |b| [1, 2, 3].each(&b) }.to yield_successive_args(1, 2, 3)
+expect { |b| { :a => 1, :b => 2 }.each(&b) }.to yield_successive_args([:a, 1], [:b, 2])
+```
+###mocks
+
+```ruby
+book = instance_double("Book", :pages => 250)
+allow(book).to receive(:title).and_return("The RSpec Book") # имеет 2 альтернативных синтакса
+```
+
+Consecutive return values
+
+```ruby
+allow(die).to receive(:roll).and_return(1, 2, 3)
+die.roll # => 1
+die.roll # => 2
+die.roll # => 3
+die.roll # => 3
+die.roll # => 3
+```
+
+Expecting  messages and arguments
+
+```ruby
+expect(double).to receive(:msg).with(*args)
+```
+пример посложнее
+
+```ruby
+expect(double).to receive(:msg).exactly(3).times.and_return(value1, value2, value3)
+```
+
 ## Capybara
+
+### own DSL for creating descriptive acceptance tests:
+
+```ruby
+feature "Signing in" do
+  background do
+    User.make(:email => 'user@example.com', :password => 'caplin')
+  end
+
+  scenario "Signing in with correct credentials" do
+    visit '/sessions/new'
+    within("#session") do
+      fill_in 'Email', :with => 'user@example.com'
+      fill_in 'Password', :with => 'caplin'
+    end
+    click_button 'Sign in'
+    expect(page).to have_content 'Success'
+  end
+
+  given(:other_user) { User.make(:email => 'other@example.com', :password => 'rous') }
+
+  scenario "Signing in as another user" do
+    visit '/sessions/new'
+    within("#session") do
+      fill_in 'Email', :with => other_user.email
+      fill_in 'Password', :with => other_user.password
+    end
+    click_button 'Sign in'
+    expect(page).to have_content 'Invalid email or password'
+  end
+end
+```
+
+expectations:
+
+```ruby
+expect(current_path).to eq(post_comments_path(post))
+```
+
+clicking:
+
+```ruby
+click_link('id-of-link')
+click_link('Link Text')
+click_button('Save')
+click_on('Link Text') # clicks on either links or buttons
+click_on('Button Value')
+```
+
+Interacting with forms
+
+```ruby
+fill_in('First Name', :with => 'John')
+fill_in('Password', :with => 'Seekrit')
+fill_in('Description', :with => 'Really Long Text...')
+choose('A Radio Button')
+check('A Checkbox')
+uncheck('A Checkbox')
+attach_file('Image', '/path/to/image.jpg')
+select('Option', :from => 'Select Box')
+```
+
+querying
+
+```ruby
+page.has_selector?('table tr')
+page.has_selector?(:xpath, '//table/tr')
+page.has_xpath?('//table/tr')
+page.has_css?('table tr.foo')
+page.has_content?('foo')
+```
+finding
+
+```ruby
+find_field('First Name').value
+find_link('Hello').visible?
+find_button('Send').click
+find('#navigation').click_link('Home') # in context of #navigation
+find(:xpath, "//table/tr").click
+find("#overlay").find("h1").click
+all('a').each { |a| a[:href] }
+```
+
+Scoping
+
+```ruby
+within("li#employee") do
+  fill_in 'Name', :with => 'Jimmy'
+end
+
+within(:xpath, "//li[@id='employee']") do
+  fill_in 'Name', :with => 'Jimmy'
+end
+```
+
+Scripting
+
+```ruby
+page.execute_script("$('body').empty()")
+```
+
+работа с всплывающими окнами:
+
+```ruby
+accept_alert
+dismiss_confirm do
+accept_prompt
+```
+
+debugging:
+
+```ruby
+page.save_screenshot('screenshot.png')
+print page.html
+save_and_open_page
+save_and_open_screenshot
+```
+
+работет с ajax(!!!), expect(...) ждёт ответа от сервера N секунд, время можно поменять 
+с помощью Capybara.default_wait_time = 5
+
+### using with RSpec
+```ruby
+describe "the signin process", :type => :feature do
+  before :each do
+    User.make(:email => 'user@example.com', :password => 'password')
+  end
+
+  it "signs me in" do
+    visit '/sessions/new'
+    within("#session") do
+      fill_in 'Email', :with => 'user@example.com'
+      fill_in 'Password', :with => 'password'
+    end
+    click_button 'Sign in'
+    expect(page).to have_content 'Success'
+  end
+end
+```
 
 ## BDD vs TDD
 
@@ -1919,3 +2157,18 @@ When he returns the garment for a replacement in black,
 Then I should have three blue garments in stock
 And two black garments in stock
 ```
+
+### Use rspec and capybara with cucumber
+
+When /I sign in/ do
+  visit '/sessions/new'
+    within("#session") do
+      fill_in 'Email', :with => 'user@example.com'
+      fill_in 'Password', :with => 'password'
+    end
+    click_button 'Sign in'
+end
+
+Then /I should be logged in/ do
+  expect(page).to have_content 'Success'
+end
