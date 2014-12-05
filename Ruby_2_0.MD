@@ -125,7 +125,7 @@ using NumberQuery
 ```
 
 ###__dir__ - возвращает каталог текущего исполняющегося файла
- (что-то типа File.dirname(File.realpath(__FILE__)))
+ (что-то типа ```File.dirname(File.realpath(__FILE__))```)
  
 ###Unbound methods from a module can be bound to any object
 
