@@ -48,6 +48,7 @@ end
 
 ##Required Keyword Arguments
 
+```ruby
 def foo(str:, delimiter: "-")
   str.split.join(delimiter)
 end
