@@ -93,11 +93,16 @@ puts s[:bar]
 ```
 
 ruby 2.0:
-```TypeError: no implicit conversion of Symbol into Integer```
+
+```
+TypeError: no implicit conversion of Symbol into Integer
+```
 
 ruby 2.1:
 
-```foo```
+```
+foo
+```
 
 ##Faster Numbers for Serious Math
 Ruby 2.1 is now faster when it comes to large numbers, as it uses 128 bit integers 
