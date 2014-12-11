@@ -96,7 +96,10 @@ ruby 2.0:
 ```TypeError: no implicit conversion of Symbol into Integer```
 
 ruby 2.1:
-```foo```
+
+```
+foo
+```
 
 
 ##Faster Numbers for Serious Math
