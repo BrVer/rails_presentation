@@ -1,4 +1,4 @@
-# Ruby 2.0
+# Ruby 2.0 INTERESTING PARTS
 
 http://globaldev.co.uk/2013/03/ruby-2-0-0-in-detail/
 http://inet777.ru/news/8407/vyipuschen-reliz-ruby-2-0-0
@@ -45,7 +45,7 @@ p wrap("foo", :before => "{", :after => "}") #=> "{foo}"
 Модуль, подключаемый с помощью <code>prepend</code> может вызвать метод, который он перекрывает 
 в классе с помощью обращения <code>super</code>:
 
-inheritsnce chain:
+inheritance chain:
 
 Object<br/>
 superclass<br/>
@@ -224,7 +224,48 @@ open.to_h                          #=> {:foo=>"bar"}
 This is a fork of the Oniguruma regexp engine used by 1.9, with a few more features. 
 The new features seem Perl-inspired, with a good reference.
 
-##асинхронный перехват исключений (Asynchronous exception handling API)
+##Rubygems Gemfile support
+
+Rubygems can now use your Gemfile (or Isolate, or gem.deps.rb) to install gems and load activation information.
+
+You can install the gems listed in your Gemfile (and their dependancies) by specifying the --file (or -g) option. 
+This only uses the Gemfile, not Gemfile.lock, so only versions specified in the Gemfile will be respected.
+
+```gem install --file Gemfile```
+
+ - не очень интересно, потомучто всё равно юзаем ```bundle install``` 
+
+
+###RDoc markdown support
+
+RDoc now understands markdown, to run rdoc with markdown formatting set the markup option
+
+```rdoc --markup markdown```
+This can be saved in your project with a .doc_options file so you don’t need to repeat it every time
+
+```rdoc --markup markdown --write-options```
+
+###TracePoint
+
+TracePoint is a new object oriented version of the old Kernel#set_trace_func. 
+It allows you to trace the execution of your Ruby code, 
+this can be really handy when debugging code that isn’t terribly straight forward.
+
+
+###Asynchronous Thread interrupt handling
+
+Ruby threads can be killed or have an exception raised in them by another. 
+This isn’t a terribly safe feature as the killing thread doesn’t know what the thread being killed is doing, 
+you could end up killing a thread in the middle of some important resource allocation or deallocation. 
+We now have a feature to deal with this more safely.
+
+As an example, the stdlib timeout library works by spawning a second thread, 
+which waits for the specified amount of time, and then raises and exception in the original thread.
+
+```ruby
+Thread.handle_interrupt(Timeout::ExitException => :immediate)
+```
+
 
 
 ##Отладчик:
