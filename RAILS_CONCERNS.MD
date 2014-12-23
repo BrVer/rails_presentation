@@ -1,6 +1,6 @@
 http://artemeff.com/2013/04/21/concerns-v-rails-4.html
 http://habrahabr.ru/post/125822/
-http://engineering.appfolio.com/2013/06/17/ruby-mixins-activesupportconcern/
+http://engineering.appfolio.com/2013/06/17/ruby-mixins-activesupportconcern/ - самая годная статья
 
 итак, типичная модель:
 
@@ -55,13 +55,13 @@ module UserStuff
     # экстендим модель методами класса
     base.extend ClassMethods
 
-    # инклудим методы экземпляра
+    # инклюдим методы экземпляра
     # Module#include — приватный метод. Его по задумке можно вызывать только внутри определения класса
     # Поэтому мы не можем написать base.include(InstanceMethods), а приходится делать так:
     base.send :include, InstanceMethods
 
-    # а дальше пошли валидации и прочее # вот тут вопрос instance_eval или class_eval
-    base.instance_eval do
+    # а дальше пошли валидации и прочее
+    base.class_eval do
       validates :gender, :presence => true
     end
     
