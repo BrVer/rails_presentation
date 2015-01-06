@@ -8,9 +8,9 @@ http://www.sitepoint.com/streaming-with-rails-4/ - without js handling, original
 http://habrahabr.ru/post/187994/ - without js handling, translated
 http://api.rubyonrails.org/classes/ActionController/Streaming.html - в конце про поддержку unicorn & passenger
 http://tenderlovemaking.com/2012/07/30/is-it-live.html - passenger
+http://learn.javascript.ru/server-sent-events - SSE in JS (EventSource etc.)
 
-CONCERNS
-/RAILS_CONCERNS.MD
+CONCERNS - see RAILS_CONCERNS.MD
 
 ETAGS
 http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/ - шикарная статья

@@ -125,9 +125,3 @@ config.action_dispatch.default_headers = {
 ##Encrypted Cookies
 
 новая session_store опция под названием ‘encrypted_cookie_store’, стоит по дэфолту, юзает sha
-
-
-# концерны
-
-
-
