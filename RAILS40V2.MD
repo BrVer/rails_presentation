@@ -1,3 +1,17 @@
+THREAD SAFETY
+http://habrahabr.ru/post/172109/
+http://tenderlovemaking.com/2012/06/18/removing-config-threadsafe.html
+
+LIVE STREAMING
+http://tenderlovemaking.com/2012/07/30/is-it-live.html - full overview, with js handlers
+http://www.sitepoint.com/streaming-with-rails-4/ - without js handling, original
+http://habrahabr.ru/post/187994/ - without js handling, translated
+http://api.rubyonrails.org/classes/ActionController/Streaming.html - в конце про поддержку unicorn & passenger
+http://tenderlovemaking.com/2012/07/30/is-it-live.html - passenger
+
+CONCERNS
+/RAILS_CONCERNS.MD
+
 ETAGS
 http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/ - шикарная статья
 http://www.bootyard.com/programming/etags-in-rails-4.html
@@ -12,13 +26,3 @@ http://rusrails.ru/caching-with-rails-an-overview#keshirovanie-fragmenta
 TURBOLINKS
 https://github.com/rails/turbolinks
 http://habrahabr.ru/post/167161/
-
-THREAD SAFETY
-http://habrahabr.ru/post/172109/
-
-LIVE STREAMING
-http://tenderlovemaking.com/2012/07/30/is-it-live.html - full overview, with js handlers
-http://www.sitepoint.com/streaming-with-rails-4/ - without js handling, original
-http://habrahabr.ru/post/187994/ - without js handling, translated
-http://api.rubyonrails.org/classes/ActionController/Streaming.html - в конце про поддержку unicorn & passenger
-http://tenderlovemaking.com/2012/07/30/is-it-live.html - passenger
